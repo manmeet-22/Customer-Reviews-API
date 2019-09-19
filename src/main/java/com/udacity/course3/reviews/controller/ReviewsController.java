@@ -11,10 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.udacity.course3.reviews.entity.Product;
 import com.udacity.course3.reviews.entity.Review;
-import com.udacity.course3.reviews.repository.ProductRepository;
-import com.udacity.course3.reviews.repository.ReviewRepository;
+import com.udacity.course3.reviews.entity.ReviewDocument;
+import com.udacity.course3.reviews.service.ReviewPersistenceService;
 
 /**
  * Spring REST controller for working with review entity.
@@ -22,14 +21,9 @@ import com.udacity.course3.reviews.repository.ReviewRepository;
 @RestController
 public class ReviewsController {
 
-	/** The review repository. */
+	/** The review persistence service. */
 	@Autowired
-	ReviewRepository reviewRepository;
-
-	/** The product repository. */
-	@Autowired
-	ProductRepository productRepository;
-
+	ReviewPersistenceService reviewPersistenceService;
 	/**
 	 * Creates a review for a product.
 	 * <p>
@@ -44,28 +38,26 @@ public class ReviewsController {
 	@RequestMapping(value = "/reviews/products/{productId}", method = RequestMethod.POST)
 	public ResponseEntity<?> createReviewForProduct(@PathVariable("productId") Integer productId,
 			@RequestBody Review review) {
-		Optional<Product> productOptional = productRepository.findById(productId);
-		if (productOptional.isPresent()) {
-			review.setProduct(productOptional.get());
-			return ResponseEntity.ok(reviewRepository.save(review));
+		Optional<ReviewDocument> reviewDocument = reviewPersistenceService.persistReview(productId, review);
+		if (reviewDocument.isPresent()) {
+			return ResponseEntity.ok(reviewDocument.get());
 		} else {
 			return ResponseEntity.notFound().build();
 		}
 	}
 
 	/**
-	 * Lists reviews by product.
+	 * List reviews for product.
 	 *
-	 * @param productId The id of the product.
-	 * @return The list of reviews.
+	 * @param productId the product id
+	 * @return the response entity
 	 */
 	@RequestMapping(value = "/reviews/products/{productId}", method = RequestMethod.GET)
-	public ResponseEntity<List<Review>> listReviewsForProduct(@PathVariable("productId") Integer productId) {
-		Product product = new Product();
-		product.setProductId(productId);
-		if (reviewRepository.findAllByProduct(product).size() == 0) {
-			return ResponseEntity.notFound().build();
+	public ResponseEntity<?> listReviewsForProduct(@PathVariable("productId") Integer productId) {
+		Optional<List<ReviewDocument>> reviewDocument = reviewPersistenceService.getReviewDocForProduct(productId);
+		if (reviewDocument.get().isEmpty()) {
+			return ResponseEntity.notFound().build();		
 		}
-		return ResponseEntity.ok(reviewRepository.findAllByProduct(product));
+		return ResponseEntity.ok(reviewDocument.get());
 	}
 }

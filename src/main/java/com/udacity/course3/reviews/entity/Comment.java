@@ -11,12 +11,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  *
  */
 @Entity
+@Table(name = "comment")
 @JsonIgnoreProperties
 public class Comment {
-
 	/** The comment id. */
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)	
 	private Integer commentId;
 
 	/** The comment heading. */

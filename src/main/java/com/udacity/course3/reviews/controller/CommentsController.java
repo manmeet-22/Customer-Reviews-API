@@ -15,6 +15,7 @@ import com.udacity.course3.reviews.entity.Comment;
 import com.udacity.course3.reviews.entity.Review;
 import com.udacity.course3.reviews.repository.CommentRepository;
 import com.udacity.course3.reviews.repository.ReviewRepository;
+import com.udacity.course3.reviews.service.CommentPersistenceService;
 
 /**
  * Spring REST controller for working with comment entity.
@@ -23,12 +24,14 @@ import com.udacity.course3.reviews.repository.ReviewRepository;
 @RequestMapping("/comments")
 public class CommentsController {
 
-	// TODO: Wire needed JPA repositories here
 	@Autowired
 	ReviewRepository reviewRepository;
 
 	@Autowired
 	CommentRepository commentRepository;
+
+	@Autowired
+	CommentPersistenceService commentPersistenceService;
 
 	/**
 	 * Creates a comment for a review.
@@ -42,10 +45,10 @@ public class CommentsController {
 	@RequestMapping(value = "/reviews/{reviewId}", method = RequestMethod.POST)
 	public ResponseEntity<?> createCommentForReview(@PathVariable("reviewId") Integer reviewId,
 			@RequestBody Comment comment) {
-		Optional<Review> reviewOptional = reviewRepository.findById(reviewId);
-		if (reviewOptional.isPresent()) {
-			comment.setReview(reviewOptional.get());
-			return ResponseEntity.ok(commentRepository.save(comment));
+		Optional<Comment> persistedComment = commentPersistenceService.persistComment(reviewId, comment);
+
+		if (persistedComment.isPresent()) {
+			return ResponseEntity.ok(persistedComment.get());
 		} else {
 			return ResponseEntity.notFound().build();
 		}
@@ -60,12 +63,11 @@ public class CommentsController {
 	 * @param reviewId The id of the review.
 	 */
 	@RequestMapping(value = "/reviews/{reviewId}", method = RequestMethod.GET)
-	public ResponseEntity<List<Comment>> listCommentsForReview(@PathVariable("reviewId") Integer reviewId) {
-		Review review = new Review();
-		review.setReviewId(reviewId);
-		if (commentRepository.findAllByReview(review).size() == 0) {
+	public ResponseEntity<?> listCommentsForReview(@PathVariable("reviewId") Integer reviewId) {
+		List<Comment> commentList = commentRepository.findAllByReview(new Review(reviewId));
+		if (commentList.isEmpty()) {
 			return ResponseEntity.notFound().build();
-		}	
-		return ResponseEntity.ok(commentRepository.findAllByReview(review));
+		}
+		return ResponseEntity.ok(commentList);
 	}
 }

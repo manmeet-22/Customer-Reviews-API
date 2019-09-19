@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -14,14 +15,15 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  *
  */
 @Entity
+@Table(name = "product")
 @JsonIgnoreProperties
 public class Product {
 
 	/** The product id. */
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer productId;
-
+	@GeneratedValue(strategy = GenerationType.IDENTITY)	
+	private Integer productId; 
+	
 	/** The product name. */
 	private String productName;
 
@@ -90,7 +92,7 @@ public class Product {
 	public void setProductDescription(String productDescription) {
 		this.productDescription = productDescription;
 	}
-
+	
 	/**
 	 * Gets the product price.
 	 *
@@ -118,5 +120,7 @@ public class Product {
 	public String toString() {
 		return "Product [productId=" + productId + ", productName=" + productName + ", productDescription="
 				+ productDescription + ", productPrice=" + productPrice + "]";
-	}
+	}	
+	
+	
 }

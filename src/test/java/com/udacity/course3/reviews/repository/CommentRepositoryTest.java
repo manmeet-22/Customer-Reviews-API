@@ -25,25 +25,25 @@ import com.udacity.course3.reviews.entity.Review;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class CommentRepositoryTest {
-	
+
 	/** The comment repository. */
 	@Autowired
 	private CommentRepository commentRepository;
-	
+
 	/** The review repository. */
 	@Autowired
 	private ReviewRepository reviewRepository;
-	
+
 	/** The product repository. */
 	@Autowired
 	private ProductRepository productRepository;
 
 	/** The product. */
 	private static Product product;
-	
+
 	/** The review. */
 	private static Review review;
-	
+
 	/** The comment. */
 	private static Comment comment;
 

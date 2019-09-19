@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -15,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  *
  */
 @Entity
+@Table(name = "review")
 @JsonIgnoreProperties
 public class Review {
 
@@ -39,6 +41,15 @@ public class Review {
 	public Review() {
 	}
 
+    /**
+     * Instantiates a new review.
+     *
+     * @param reviewId the review id
+     */
+    public Review(Integer reviewId) {
+        this.reviewId = reviewId;
+    }
+    
 	/**
 	 * Gets the review id.
 	 *
@@ -121,4 +132,6 @@ public class Review {
 		return "Review [reviewId=" + reviewId + ", reviewHeading=" + reviewHeading + ", reviewContent=" + reviewContent
 				+ ", product=" + product + "]";
 	}
+	
+	
 }
